@@ -1,0 +1,43 @@
+class Solution
+{
+	public:
+	//Function to find sum of weights of edges of the Minimum Spanning Tree.
+	void unio(int a,int b,vector<int> &rank,vector<int> &parent){
+	    int u=findParent(a,parent);
+	    int v=findParent(b,parent);
+	    if(rank[u]>rank[v])
+	        parent[v]=u;
+	    else if(rank[u]<rank[v])
+	        parent[u]=v;
+	    else{
+	       parent[u]=v;
+	       rank[v]++;
+	   }
+	}
+	int findParent(int node,vector<int> &parent){
+	    if(parent[node] == node){
+	        return node;
+	    }
+	    return parent[node] = findParent(parent[node],parent);
+	}
+    int spanningTree(int V, vector<vector<int>> adj[]){
+        vector<pair<int,pair<int,int>>> edges;
+        for(int i=0;i<V;i++){
+            for(auto it: adj[i]){
+                edges.push_back({it[1],{i,it[0]}});
+            }
+        }
+        vector<int> parent(V),rank(V,0);
+        for(int i=0;i<V;i++)
+            parent[i]=i;
+        sort(edges.begin(),edges.end());
+        int cost=0;
+        for(auto it: edges){
+            if(findParent(it.second.first,parent)!=findParent(it.second.second,parent)){
+                cost+=it.first;
+                unio(it.second.first,it.second.second,rank,parent);
+            }
+        }
+        return cost;
+    }
+};
